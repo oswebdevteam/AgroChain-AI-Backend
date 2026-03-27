@@ -127,4 +127,4 @@ app.use((_req, res) => {
 
 app.use(errorHandler);
 
-export { app };
+export default app;
