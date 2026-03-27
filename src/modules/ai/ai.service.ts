@@ -1,4 +1,4 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '../../config/env';
 import { aiRepository } from './ai.repository';
 import { buildSystemPrompt, buildAnalysisPrompt } from './ai.prompts';
@@ -23,12 +23,10 @@ interface AiAnalysisResult {
 }
 
 export class AiService {
-  private openai: OpenAI;
+  private genAI: GoogleGenerativeAI;
 
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: config.OPENAI_API_KEY,
-    });
+    this.genAI = new GoogleGenerativeAI(config.GEMINI_API_KEY);
   }
 
   /**
@@ -66,7 +64,7 @@ export class AiService {
       )
       : 0;
 
-    // Step 3: Build prompt and call OpenAI
+    // Step 3: Build prompt and call Gemini
     const systemPrompt = buildSystemPrompt();
     const userPrompt = buildAnalysisPrompt({
       ...traderStats,
@@ -77,26 +75,28 @@ export class AiService {
     let analysisResult: AiAnalysisResult;
 
     try {
-      const completion = await this.openai.chat.completions.create({
-        model: config.OPENAI_MODEL,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        max_tokens: config.OPENAI_MAX_TOKENS,
-        temperature: 0.3, // Low temperature for consistent scoring
-        response_format: { type: 'json_object' },
+      const model = this.genAI.getGenerativeModel({
+        model: config.GEMINI_MODEL,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          maxOutputTokens: config.GEMINI_MAX_TOKENS,
+          temperature: 0.3,
+        },
+        systemInstruction: systemPrompt,
       });
 
-      const content = completion.choices[0]?.message?.content;
+      const result = await model.generateContent(userPrompt);
+      const response = await result.response;
+      const content = response.text();
+
       if (!content) {
-        throw new Error('Empty response from OpenAI');
+        throw new Error('Empty response from Gemini');
       }
 
       analysisResult = this.parseAiResponse(content);
     } catch (error) {
       if (error instanceof AppError) throw error;
-      logger.error({ error, userId }, 'OpenAI API call failed — using fallback scoring');
+      logger.error({ error, userId }, 'Gemini API call failed — using fallback scoring');
       // Fallback: generate a basic score from statistics
       analysisResult = this.generateFallbackScore(traderStats);
     }
@@ -189,7 +189,7 @@ export class AiService {
   }
 
   /**
-   * Fallback scoring when OpenAI is unavailable.
+   * Fallback scoring when Gemini is unavailable.
    * Uses simple heuristics based on trade statistics.
    */
   private generateFallbackScore(traderStats: {

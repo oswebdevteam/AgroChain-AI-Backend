@@ -38,7 +38,7 @@ Supabase (PostgreSQL + Auth + RLS)
 External integrations:
 - **Interswitch** — Payment gateway (card payments, payouts)
 - **Base Sepolia** — Blockchain trust layer (ethers.js v6)
-- **OpenAI** — AI financial identity scoring
+- **Google Gemini** — AI financial identity scoring (Gemini 2.5 Flash)
 
 ---
 
@@ -53,7 +53,7 @@ External integrations:
 | Auth | Supabase Auth + JWT + httpOnly cookies |
 | Payments | Interswitch API v3 |
 | Blockchain | ethers.js v6 / Base Sepolia |
-| AI | OpenAI API (GPT-4o) |
+| AI | Google Gemini 2.5 Flash |
 | Validation | Zod |
 | Logging | Pino (structured JSON) |
 | Testing | Jest + Supertest + ts-jest |
@@ -69,7 +69,7 @@ External integrations:
 - **npm** 10.x or later
 - **Supabase account** — [supabase.com](https://supabase.com)
 - **Interswitch sandbox account** — [sandbox.interswitchng.com](https://sandbox.interswitchng.com)
-- **OpenAI API key** — [platform.openai.com](https://platform.openai.com)
+- **Google AI API key** — [aistudio.google.com](https://aistudio.google.com)
 
 ### Installation
 
@@ -132,8 +132,9 @@ Copy `.env.example` to `.env` and fill in all values:
 | `INTERSWITCH_MERCHANT_CODE` | Your merchant code |
 | `INTERSWITCH_WEBHOOK_SECRET` | Webhook signature verification key |
 | `BLOCKCHAIN_PRIVATE_KEY` | Base Sepolia testnet wallet private key (**NEVER** use mainnet) |
-| `TRADE_LOGGER_CONTRACT_ADDRESS` | Deployed contract address (or `0x` for raw tx mode) |
-| `OPENAI_API_KEY` | OpenAI API key for credit scoring |
+| `TRADE_LOGGER_CONTRACT_ADDRESS` | Deployed contract address on Base Sepolia |
+| `GEMINI_API_KEY` | Google AI API key for credit scoring |
+| `GEMINI_MODEL` | Gemini model (default: `gemini-2.5-flash`) |
 | `FX_API_KEY` | Exchange rate API key |
 
 > ⚠️ **Never commit `.env` to version control.** Use the `.env.example` as reference.
@@ -188,7 +189,7 @@ npm run test:watch
 npm run lint
 ```
 
-Tests use mocked Supabase, Interswitch, blockchain, and OpenAI clients. No real API calls are made during testing.
+Tests use mocked Supabase, Interswitch, blockchain, and Gemini clients. No real API calls are made during testing.
 
 ---
 
@@ -237,7 +238,7 @@ agrochain-ai-backend/
 │   │   ├── payments/    # Interswitch integration + webhooks
 │   │   ├── escrow/      # Escrow hold/release/refund
 │   │   ├── blockchain/  # Base Sepolia recording + proof
-│   │   ├── ai/          # OpenAI credit scoring engine
+│   │   ├── ai/          # Google Gemini credit scoring engine
 │   │   └── analytics/   # Trade corridors, FX, settlement metrics
 │   ├── app.ts           # Express app setup
 │   └── server.ts        # Server entry point
@@ -267,7 +268,7 @@ Core order lifecycle, Interswitch payments, webhook handling, escrow hold/releas
 Immutable trade recording on Base Sepolia, BaseScan verification links.
 
 ### Phase 3 — AI Financial Identity Engine ✅
-OpenAI-powered credit scoring, risk indicators, financing eligibility.
+Gemini-powered credit scoring, risk indicators, financing eligibility.
 
 ### Phase 4 — Cross-Border Intelligence ✅
 FX rate integration, trade corridor analytics, settlement metrics.

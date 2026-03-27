@@ -36,10 +36,10 @@ const envSchema = z.object({
   TRADE_LOGGER_CONTRACT_ADDRESS: z.string().min(1, 'TRADE_LOGGER_CONTRACT_ADDRESS is required'),
   BASE_SEPOLIA_CHAIN_ID: z.string().default('84532').transform(Number),
 
-  // OpenAI
-  OPENAI_API_KEY: z.string().min(1, 'OPENAI_API_KEY is required'),
-  OPENAI_MODEL: z.string().default('gpt-4o'),
-  OPENAI_MAX_TOKENS: z.string().default('1500').transform(Number),
+  // Gemini
+  GEMINI_API_KEY: z.string().min(1, 'GEMINI_API_KEY is required'),
+  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  GEMINI_MAX_TOKENS: z.string().default('1500').transform(Number),
 
   // FX API
   FX_API_BASE_URL: z.string().url().default('https://v6.exchangerate-api.com/v6'),

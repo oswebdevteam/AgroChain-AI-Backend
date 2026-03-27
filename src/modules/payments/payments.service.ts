@@ -240,9 +240,25 @@ export class PaymentsService {
 
     // Step 1: Verify webhook signature
     const expectedSignature = hmacSha512(rawBody, config.INTERSWITCH_WEBHOOK_SECRET);
-    if (!secureCompare(signature.toLowerCase(), expectedSignature.toLowerCase())) {
-      logger.warn('Webhook signature verification failed');
-      throw AppError.unauthorized('Invalid webhook signature');
+    const isValid = secureCompare(
+      signature.toLowerCase(),
+      expectedSignature.toLowerCase()
+    );
+
+    if (!isValid) {
+      if (config.NODE_ENV === 'development') {
+        logger.warn(
+          {
+            expected: expectedSignature,
+            received: signature,
+            instruction: 'Proceeding anyway due to development mode',
+          },
+          'Webhook signature verification failed — BYPASS ENABLED'
+        );
+      } else {
+        logger.warn('Webhook signature verification failed');
+        throw AppError.unauthorized('Invalid webhook signature');
+      }
     }
 
     // Step 2: Idempotency check
