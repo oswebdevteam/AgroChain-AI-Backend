@@ -13,10 +13,17 @@ import request from 'supertest';
 import { app } from '../../src/app';
 import { OrderStatus, EscrowStatus } from '../../src/common/types';
 
+// Constants used in mocks - must be literal strings to avoid hoisting errors if possible,
+// or defined inside the factories.
+const mockE2EOrderId = '00000000-0000-4000-a000-000000000001';
+const mockE2EBuyerId = '00000000-0000-4000-a000-000000000002';
+const mockE2ESellerId = '00000000-0000-4000-a000-000000000003';
+const mockE2EEscrowId = '00000000-0000-4000-a000-000000000004';
+
 // Mock all external dependencies
 jest.mock('../../src/common/middleware/auth.middleware', () => ({
   authenticate: (req: any, _res: any, next: any) => {
-    req.user = { id: 'e2e-buyer-id', email: 'buyer@test.com', role: 'BUYER' };
+    req.user = { id: '00000000-0000-4000-a000-000000000002', email: 'buyer@test.com', role: 'BUYER' };
     req.accessToken = 'e2e-token';
     next();
   },
@@ -24,9 +31,9 @@ jest.mock('../../src/common/middleware/auth.middleware', () => ({
 }));
 
 const mockOrder = {
-  id: 'e2e-order-id',
-  buyer_id: 'e2e-buyer-id',
-  seller_id: 'e2e-seller-id',
+  id: mockE2EOrderId,
+  buyer_id: mockE2EBuyerId,
+  seller_id: mockE2ESellerId,
   produce_type: 'Cassava',
   quantity: 500,
   unit: 'kg',
@@ -44,27 +51,37 @@ const mockOrder = {
 let currentOrderStatus = OrderStatus.PENDING;
 let currentEscrowStatus: EscrowStatus | null = null;
 
-jest.mock('../../src/modules/orders/orders.service', () => ({
-  ordersService: {
-    createOrder: jest.fn().mockImplementation(async () => {
-      currentOrderStatus = OrderStatus.PENDING;
-      return { ...mockOrder, status: currentOrderStatus };
-    }),
-    getOrderById: jest.fn().mockImplementation(async () => ({
-      ...mockOrder,
-      status: currentOrderStatus,
-    })),
-    listOrders: jest.fn().mockImplementation(async () => ({
-      orders: [{ ...mockOrder, status: currentOrderStatus }],
-      total: 1,
-    })),
-    confirmDelivery: jest.fn().mockImplementation(async () => {
-      currentOrderStatus = OrderStatus.DELIVERED;
-      return { ...mockOrder, status: currentOrderStatus };
-    }),
-    cancelOrder: jest.fn(),
-  },
-}));
+jest.mock('../../src/modules/orders/orders.service', () => {
+  return {
+    ordersService: {
+      createOrder: jest.fn().mockImplementation(async () => {
+        return {
+          id: '00000000-0000-4000-a000-000000000001',
+          buyer_id: '00000000-0000-4000-a000-000000000002',
+          seller_id: '00000000-0000-4000-a000-000000000003',
+          status: 'PENDING',
+          currency: 'NGN',
+          total_amount: 150000,
+          created_at: new Date().toISOString(),
+        };
+      }),
+      getOrderById: jest.fn().mockImplementation(async () => ({
+        id: '00000000-0000-4000-a000-000000000001',
+        status: 'PENDING',
+        currency: 'NGN',
+        total_amount: 150000,
+      })),
+      listOrders: jest.fn().mockImplementation(async () => ({
+        orders: [{ id: '00000000-0000-4000-a000-000000000001', status: 'PENDING' }],
+        total: 1,
+      })),
+      confirmDelivery: jest.fn().mockImplementation(async () => {
+        return { id: '00000000-0000-4000-a000-000000000001', status: 'DELIVERED' };
+      }),
+      cancelOrder: jest.fn(),
+    },
+  };
+});
 
 jest.mock('../../src/modules/payments/payments.service', () => ({
   paymentsService: {
@@ -74,10 +91,7 @@ jest.mock('../../src/modules/payments/payments.service', () => ({
       redirectUrl: 'https://pay.interswitch.com/e2e',
       amount: 150000,
     }),
-    handleWebhook: jest.fn().mockImplementation(async () => {
-      currentOrderStatus = OrderStatus.IN_ESCROW;
-      currentEscrowStatus = EscrowStatus.HELD;
-    }),
+    handleWebhook: jest.fn(),
     verifyPayment: jest.fn().mockResolvedValue({
       status: 'COMPLETED',
       amount: 150000,
@@ -90,23 +104,21 @@ jest.mock('../../src/modules/payments/payments.service', () => ({
 jest.mock('../../src/modules/escrow/escrow.service', () => ({
   escrowService: {
     getEscrowByOrderId: jest.fn().mockImplementation(async () => ({
-      id: 'e2e-escrow-id',
-      order_id: 'e2e-order-id',
+      id: '00000000-0000-4000-a000-000000000004',
+      order_id: '00000000-0000-4000-a000-000000000001',
       amount: 150000,
-      status: currentEscrowStatus ?? EscrowStatus.HELD,
+      status: 'HELD',
       payment_reference: 'ISW-E2E-REF',
       blockchain_tx_hash: null,
       created_at: new Date().toISOString(),
       released_at: null,
     })),
     releaseEscrow: jest.fn().mockImplementation(async () => {
-      currentOrderStatus = OrderStatus.COMPLETED;
-      currentEscrowStatus = EscrowStatus.RELEASED;
       return {
-        id: 'e2e-escrow-id',
-        order_id: 'e2e-order-id',
+        id: '00000000-0000-4000-a000-000000000004',
+        order_id: '00000000-0000-4000-a000-000000000001',
         amount: 150000,
-        status: EscrowStatus.RELEASED,
+        status: 'RELEASED',
         released_at: new Date().toISOString(),
       };
     }),
@@ -118,7 +130,7 @@ jest.mock('../../src/modules/escrow/escrow.service', () => ({
 jest.mock('../../src/modules/blockchain/blockchain.service', () => ({
   blockchainService: {
     getBlockchainProof: jest.fn().mockResolvedValue({
-      orderId: 'e2e-order-id',
+      orderId: '00000000-0000-4000-a000-000000000001',
       events: [{
         eventType: 'TRADE_RECORDED',
         txHash: '0xe2e-tx-hash',
@@ -136,7 +148,7 @@ jest.mock('../../src/modules/blockchain/blockchain.service', () => ({
 jest.mock('../../src/modules/ai/ai.service', () => ({
   aiService: {
     getFinancialIdentity: jest.fn().mockResolvedValue({
-      user_id: 'e2e-buyer-id',
+      user_id: '00000000-0000-4000-a000-000000000002',
       credit_readiness_score: 65,
       risk_indicators: [],
       reliability_rating: 80,
@@ -182,7 +194,7 @@ describe('E2E: Complete Trade Flow', () => {
     // Step 2: Initiate Payment
     const payRes = await request(app)
       .post('/api/v1/payments/initiate')
-      .send({ orderId: 'e2e-order-id' });
+      .send({ orderId: mockE2EOrderId });
 
     expect(payRes.status).toBe(200);
     expect(payRes.body.data.transactionRef).toBeDefined();
@@ -205,28 +217,28 @@ describe('E2E: Complete Trade Flow', () => {
 
     // Step 4: Verify escrow exists
     const escrowRes = await request(app)
-      .get('/api/v1/escrow/e2e-order-id');
+      .get(`/api/v1/escrow/${mockE2EOrderId}`);
 
     expect(escrowRes.status).toBe(200);
     expect(escrowRes.body.data.status).toBe(EscrowStatus.HELD);
 
     // Step 5: Confirm Delivery
     const deliveryRes = await request(app)
-      .post('/api/v1/orders/00000000-0000-4000-a000-000000000001/confirm-delivery')
+      .post(`/api/v1/orders/${mockE2EOrderId}/confirm-delivery`)
       .send({ deliveryProofUrl: 'https://proof.example.com/image.jpg' });
 
     expect(deliveryRes.status).toBe(200);
 
     // Step 6: Release Escrow
     const releaseRes = await request(app)
-      .post('/api/v1/escrow/e2e-order-id/release');
+      .post(`/api/v1/escrow/${mockE2EOrderId}/release`);
 
     expect(releaseRes.status).toBe(200);
     expect(releaseRes.body.data.status).toBe(EscrowStatus.RELEASED);
 
     // Step 7: Get Blockchain Proof
     const proofRes = await request(app)
-      .get('/api/v1/blockchain/orders/e2e-order-id/blockchain-proof');
+      .get(`/api/v1/blockchain/orders/${mockE2EOrderId}/blockchain-proof`);
 
     expect(proofRes.status).toBe(200);
     expect(proofRes.body.data.verified).toBe(true);
@@ -234,7 +246,7 @@ describe('E2E: Complete Trade Flow', () => {
 
     // Step 8: Get Financial Identity (AI Score)
     const fiRes = await request(app)
-      .get('/api/v1/users/e2e-buyer-id/financial-identity');
+      .get(`/api/v1/users/${mockE2EBuyerId}/financial-identity`);
 
     expect(fiRes.status).toBe(200);
     expect(fiRes.body.data.credit_readiness_score).toBeGreaterThanOrEqual(0);

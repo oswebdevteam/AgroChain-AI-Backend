@@ -15,7 +15,7 @@ export class AiController {
    */
   async getFinancialIdentity(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const identity = await aiService.getFinancialIdentity(req.params.id);
+      const identity = await aiService.getFinancialIdentity(req.params.id as string);
       ApiResponse.success(res, identity);
     } catch (error) {
       next(error);
@@ -28,7 +28,7 @@ export class AiController {
    */
   async analyzeProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const identity = await aiService.analyzeTraderProfile(req.params.id);
+      const identity = await aiService.analyzeTraderProfile(req.params.id as string);
       ApiResponse.success(res, identity, 'Financial identity analysis complete');
     } catch (error) {
       next(error);

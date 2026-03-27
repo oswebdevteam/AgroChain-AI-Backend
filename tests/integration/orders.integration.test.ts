@@ -4,7 +4,7 @@ import { UserRole } from '../../src/common/types';
 import { createTestOrder, createTestProfile } from '../helpers/testData';
 
 // Mock auth middleware for integration tests
-jest.mock('../../../src/common/middleware/auth.middleware', () => ({
+jest.mock('../../src/common/middleware/auth.middleware', () => ({
   authenticate: (req: any, _res: any, next: any) => {
     req.user = { id: 'test-buyer-id', email: 'buyer@test.com', role: 'BUYER' };
     req.accessToken = 'test-token';
@@ -15,12 +15,22 @@ jest.mock('../../../src/common/middleware/auth.middleware', () => ({
   },
 }));
 
-jest.mock('../../../src/modules/orders/orders.service', () => {
-  const testOrder = createTestOrder({
-    id: 'order-123',
+jest.mock('../../src/modules/orders/orders.service', () => {
+  const testOrder = {
+    id: '00000000-0000-4000-a000-000000000001',
     buyer_id: 'test-buyer-id',
     seller_id: 'test-seller-id',
-  });
+    produce_type: 'Maize',
+    quantity: 100,
+    unit: 'kg',
+    unit_price: 500,
+    total_amount: 50000,
+    currency: 'NGN',
+    status: 'PENDING',
+    delivery_address: '123 Farm Road, Lagos',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
   return {
     ordersService: {
       createOrder: jest.fn().mockResolvedValue(testOrder),
@@ -32,11 +42,11 @@ jest.mock('../../../src/modules/orders/orders.service', () => {
   };
 });
 
-jest.mock('../../../src/config/logger', () => ({
+jest.mock('../../src/config/logger', () => ({
   logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), child: jest.fn().mockReturnThis() },
   createModuleLogger: () => ({ info: jest.fn(), warn: jest.fn(), error: jest.fn() }),
 }));
-jest.mock('../../../src/common/middleware/requestLogger.middleware', () => ({
+jest.mock('../../src/common/middleware/requestLogger.middleware', () => ({
   requestLogger: (_req: any, _res: any, next: any) => next(),
 }));
 

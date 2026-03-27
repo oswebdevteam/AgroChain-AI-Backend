@@ -15,6 +15,9 @@ jest.mock('../../../src/config/env', () => ({
     OPENAI_API_KEY: 'sk-test',
     OPENAI_MODEL: 'gpt-4o',
     OPENAI_MAX_TOKENS: 1500,
+    SUPABASE_URL: 'https://test-project.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
+    SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
   },
 }));
 jest.mock('../../../src/config/logger', () => ({
@@ -31,7 +34,13 @@ jest.mock('openai', () => {
         create: jest.fn().mockResolvedValue({
           choices: [{
             message: {
-              content: JSON.stringify(mockCreditAnalysisResponse),
+              content: JSON.stringify({
+                creditReadinessScore: 72,
+                riskIndicators: [],
+                reliabilityRating: 85,
+                financingEligibility: 'ELIGIBLE',
+                analysisNotes: 'High potential trader',
+              }),
             },
           }],
         }),

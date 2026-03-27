@@ -17,7 +17,10 @@ jest.mock('../../../src/config/env', () => ({
     BASE_SEPOLIA_RPC_URL: 'https://sepolia.base.org',
     BLOCKCHAIN_PRIVATE_KEY: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
     TRADE_LOGGER_CONTRACT_ADDRESS: '0x',
-    BASE_SEPOLIA_CHAIN_ID: 84532,
+    BASE_SEPOLIA_CHAIN_ID: '84532',
+    SUPABASE_URL: 'https://test-project.supabase.co',
+    SUPABASE_ANON_KEY: 'test-anon-key',
+    SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
   },
 }));
 jest.mock('../../../src/config/logger', () => ({
@@ -118,7 +121,7 @@ describe('BlockchainService', () => {
     it('should throw 404 if no logs found', async () => {
       (blockchainRepository.findByOrderId as jest.Mock).mockResolvedValue([]);
 
-      await expect(service.getBlockchainProof('order-1')).rejects.toThrow('not found');
+      await expect(service.getBlockchainProof('order-1')).rejects.toThrow('No blockchain records found');
     });
   });
 

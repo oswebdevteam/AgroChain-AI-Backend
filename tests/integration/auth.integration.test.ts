@@ -7,7 +7,7 @@
 import request from 'supertest';
 import { app } from '../../src/app';
 
-jest.mock('../../../src/modules/auth/auth.service', () => ({
+jest.mock('../../src/modules/auth/auth.service', () => ({
   authService: {
     register: jest.fn().mockResolvedValue({
       user: { id: 'user-1', email: 'test@test.com', role: 'BUYER' },
@@ -30,7 +30,7 @@ jest.mock('../../../src/modules/auth/auth.service', () => ({
   },
 }));
 
-jest.mock('../../../src/common/middleware/auth.middleware', () => ({
+jest.mock('../../src/common/middleware/auth.middleware', () => ({
   authenticate: (req: any, _res: any, next: any) => {
     req.user = { id: 'user-1', email: 'test@test.com', role: 'BUYER' };
     next();
@@ -38,11 +38,11 @@ jest.mock('../../../src/common/middleware/auth.middleware', () => ({
   authorize: () => (_req: any, _res: any, next: any) => next(),
 }));
 
-jest.mock('../../../src/config/logger', () => ({
+jest.mock('../../src/config/logger', () => ({
   logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), child: jest.fn().mockReturnThis() },
   createModuleLogger: () => ({ info: jest.fn(), warn: jest.fn(), error: jest.fn() }),
 }));
-jest.mock('../../../src/common/middleware/requestLogger.middleware', () => ({
+jest.mock('../../src/common/middleware/requestLogger.middleware', () => ({
   requestLogger: (_req: any, _res: any, next: any) => next(),
 }));
 
