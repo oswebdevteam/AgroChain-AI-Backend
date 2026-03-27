@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Blockchain Routes
- * ============================================
- */
-
 import { Router } from 'express';
 import { blockchainController } from './blockchain.controller';
 import { authenticate, authorize } from '../../common/middleware/auth.middleware';

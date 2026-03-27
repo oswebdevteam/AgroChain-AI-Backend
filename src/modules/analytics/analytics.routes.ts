@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Analytics Routes
- * ============================================
- */
-
 import { Router } from 'express';
 import { analyticsController } from './analytics.controller';
 import { authenticate, authorize } from '../../common/middleware/auth.middleware';

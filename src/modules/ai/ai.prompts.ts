@@ -1,12 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — AI Prompt Templates
- * ============================================
- * Structured prompts for the AI Financial Identity Engine.
- * These prompts explain the Nigerian agricultural context, scoring criteria,
- * and expected JSON output format to the LLM.
- */
-
 import { TransactionHistorySummary } from '../../common/types';
 
 /**

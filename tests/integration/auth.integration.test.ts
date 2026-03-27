@@ -5,7 +5,7 @@
  */
 
 import request from 'supertest';
-import { app } from '../../../src/app';
+import { app } from '../../src/app';
 
 jest.mock('../../../src/modules/auth/auth.service', () => ({
   authService: {

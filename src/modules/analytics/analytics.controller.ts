@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Analytics Controller
- * ============================================
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { analyticsService } from './analytics.service';
 import { ApiResponse } from '../../common/utils/response';

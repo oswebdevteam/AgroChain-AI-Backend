@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Cryptographic Utilities
- * ============================================
- * Hashing and HMAC functions for webhook verification,
- * privacy-preserving blockchain data, and idempotency keys.
- */
-
 import crypto from 'crypto';
 
 /**

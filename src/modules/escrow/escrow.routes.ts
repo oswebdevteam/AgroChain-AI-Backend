@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Escrow Routes
- * ============================================
- */
-
 import { Router } from 'express';
 import { escrowController } from './escrow.controller';
 import { validate } from '../../common/middleware/validate.middleware';

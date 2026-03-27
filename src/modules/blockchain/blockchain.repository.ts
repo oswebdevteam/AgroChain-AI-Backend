@@ -1,12 +1,5 @@
-/**
- * ============================================
- * AgroChain AI — Blockchain Repository
- * ============================================
- * Supabase data access layer for blockchain event logs.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
-import { BlockchainLogRow, BlockchainLogInsert } from '../../common/types';
+import { BlockchainLogRow, BlockchainLogInsert, BlockchainEventType } from '../../common/types';
 import { AppError } from '../../common/errors/AppError';
 import { createModuleLogger } from '../../config/logger';
 
@@ -52,7 +45,7 @@ export class BlockchainRepository {
   /**
    * Check if a trade has already been recorded on-chain (idempotency).
    */
-  async existsForOrder(orderId: string, eventType: string): Promise<boolean> {
+  async existsForOrder(orderId: string, eventType: BlockchainEventType): Promise<boolean> {
     const { count, error } = await supabaseAdmin
       .from('blockchain_logs')
       .select('id', { count: 'exact', head: true })

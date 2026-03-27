@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Orders Repository
- * ============================================
- * Supabase data access layer for produce orders.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import {
   ProduceOrderRow,
@@ -99,7 +92,7 @@ export class OrdersRepository {
 
     // Apply optional filters
     if (filters.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq('status', filters.status as OrderStatus);
     }
     if (filters.produceType) {
       query = query.ilike('produce_type', `%${filters.produceType}%`);

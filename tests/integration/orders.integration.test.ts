@@ -1,14 +1,7 @@
-/**
- * ============================================
- * AgroChain AI — Orders Integration Tests
- * ============================================
- * Tests the full HTTP request/response cycle for order endpoints.
- */
-
 import request from 'supertest';
-import { app } from '../../../src/app';
-import { UserRole } from '../../../src/common/types';
-import { createTestOrder, createTestProfile } from '../../helpers/testData';
+import { app } from '../../src/app';
+import { UserRole } from '../../src/common/types';
+import { createTestOrder, createTestProfile } from '../helpers/testData';
 
 // Mock auth middleware for integration tests
 jest.mock('../../../src/common/middleware/auth.middleware', () => ({

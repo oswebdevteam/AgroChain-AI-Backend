@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Escrow Controller
- * ============================================
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { escrowService } from './escrow.service';
 import { ApiResponse } from '../../common/utils/response';
@@ -15,7 +9,7 @@ export class EscrowController {
    */
   async getByOrderId(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const escrow = await escrowService.getEscrowByOrderId(req.params.orderId);
+      const escrow = await escrowService.getEscrowByOrderId(req.params.orderId as string);
       ApiResponse.success(res, escrow);
     } catch (error) {
       next(error);
@@ -28,7 +22,7 @@ export class EscrowController {
    */
   async release(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const escrow = await escrowService.releaseEscrow(req.params.orderId);
+      const escrow = await escrowService.releaseEscrow(req.params.orderId as string);
       ApiResponse.success(res, escrow, 'Escrow released successfully');
     } catch (error) {
       next(error);
@@ -42,7 +36,7 @@ export class EscrowController {
   async refund(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const reason = req.body.reason ?? 'Admin-initiated refund';
-      const escrow = await escrowService.refundEscrow(req.params.orderId, reason);
+      const escrow = await escrowService.refundEscrow(req.params.orderId as string, reason);
       ApiResponse.success(res, escrow, 'Escrow refunded successfully');
     } catch (error) {
       next(error);

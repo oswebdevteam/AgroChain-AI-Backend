@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — API Request/Response Types
- * ============================================
- * Typed interfaces for all API payloads.
- */
-
 import { UserRole, Currency } from './enums';
 
 // ---- Standardized API Response ----

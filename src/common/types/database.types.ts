@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Database Type Definitions
- * ============================================
- * These types mirror the Supabase PostgreSQL schema.
- * In production, generate these with: npx supabase gen types typescript
- */
-
 import {
   UserRole,
   OrderStatus,
@@ -18,45 +10,55 @@ import {
 } from './enums';
 
 /** Top-level Database type for typed Supabase client */
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
         Row: ProfileRow;
         Insert: ProfileInsert;
         Update: ProfileUpdate;
+        Relationships: [];
       };
       farmer_profiles: {
         Row: FarmerProfileRow;
         Insert: FarmerProfileInsert;
         Update: FarmerProfileUpdate;
+        Relationships: [];
       };
       produce_orders: {
         Row: ProduceOrderRow;
         Insert: ProduceOrderInsert;
         Update: ProduceOrderUpdate;
+        Relationships: [];
       };
       escrows: {
         Row: EscrowRow;
         Insert: EscrowInsert;
         Update: EscrowUpdate;
+        Relationships: [];
       };
       transaction_records: {
         Row: TransactionRecordRow;
         Insert: TransactionRecordInsert;
         Update: TransactionRecordUpdate;
+        Relationships: [];
       };
       financial_identities: {
         Row: FinancialIdentityRow;
         Insert: FinancialIdentityInsert;
         Update: FinancialIdentityUpdate;
+        Relationships: [];
       };
       blockchain_logs: {
         Row: BlockchainLogRow;
         Insert: BlockchainLogInsert;
         Update: BlockchainLogUpdate;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
     Functions: {
       process_escrow_release: {
         Args: { p_order_id: string; p_payout_reference: string; p_blockchain_tx_hash: string };
@@ -72,7 +74,7 @@ export interface Database {
 
 // ---- Profiles ----
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   role: UserRole;
   phone: string | null;
@@ -84,7 +86,7 @@ export interface ProfileRow {
   updated_at: string;
 }
 
-export interface ProfileInsert {
+export type ProfileInsert = {
   id: string;
   role: UserRole;
   phone?: string | null;
@@ -94,7 +96,7 @@ export interface ProfileInsert {
   full_name?: string | null;
 }
 
-export interface ProfileUpdate {
+export type ProfileUpdate = {
   role?: UserRole;
   phone?: string | null;
   email?: string;
@@ -106,7 +108,7 @@ export interface ProfileUpdate {
 
 // ---- Farmer Profiles ----
 
-export interface FarmerProfileRow {
+export type FarmerProfileRow = {
   id: string;
   user_id: string;
   farm_name: string;
@@ -118,7 +120,7 @@ export interface FarmerProfileRow {
   updated_at: string;
 }
 
-export interface FarmerProfileInsert {
+export type FarmerProfileInsert = {
   id?: string;
   user_id: string;
   farm_name: string;
@@ -128,7 +130,7 @@ export interface FarmerProfileInsert {
   description?: string | null;
 }
 
-export interface FarmerProfileUpdate {
+export type FarmerProfileUpdate = {
   farm_name?: string;
   farm_location?: string;
   farm_size_hectares?: number | null;
@@ -139,7 +141,7 @@ export interface FarmerProfileUpdate {
 
 // ---- Produce Orders ----
 
-export interface ProduceOrderRow {
+export type ProduceOrderRow = {
   id: string;
   buyer_id: string;
   seller_id: string;
@@ -157,7 +159,7 @@ export interface ProduceOrderRow {
   updated_at: string;
 }
 
-export interface ProduceOrderInsert {
+export type ProduceOrderInsert = {
   id?: string;
   buyer_id: string;
   seller_id: string;
@@ -172,7 +174,7 @@ export interface ProduceOrderInsert {
   notes?: string | null;
 }
 
-export interface ProduceOrderUpdate {
+export type ProduceOrderUpdate = {
   status?: OrderStatus;
   delivery_proof_url?: string | null;
   notes?: string | null;
@@ -181,7 +183,7 @@ export interface ProduceOrderUpdate {
 
 // ---- Escrows ----
 
-export interface EscrowRow {
+export type EscrowRow = {
   id: string;
   order_id: string;
   amount: number;
@@ -192,7 +194,7 @@ export interface EscrowRow {
   released_at: string | null;
 }
 
-export interface EscrowInsert {
+export type EscrowInsert = {
   id?: string;
   order_id: string;
   amount: number;
@@ -201,7 +203,7 @@ export interface EscrowInsert {
   blockchain_tx_hash?: string | null;
 }
 
-export interface EscrowUpdate {
+export type EscrowUpdate = {
   status?: EscrowStatus;
   blockchain_tx_hash?: string | null;
   released_at?: string | null;
@@ -209,7 +211,7 @@ export interface EscrowUpdate {
 
 // ---- Transaction Records ----
 
-export interface TransactionRecordRow {
+export type TransactionRecordRow = {
   id: string;
   order_id: string;
   type: TransactionType;
@@ -221,7 +223,7 @@ export interface TransactionRecordRow {
   created_at: string;
 }
 
-export interface TransactionRecordInsert {
+export type TransactionRecordInsert = {
   id?: string;
   order_id: string;
   type: TransactionType;
@@ -232,7 +234,7 @@ export interface TransactionRecordInsert {
   metadata?: Record<string, unknown>;
 }
 
-export interface TransactionRecordUpdate {
+export type TransactionRecordUpdate = {
   interswitch_ref?: string | null;
   blockchain_hash?: string | null;
   metadata?: Record<string, unknown>;
@@ -240,13 +242,13 @@ export interface TransactionRecordUpdate {
 
 // ---- Financial Identities ----
 
-export interface RiskIndicator {
+export type RiskIndicator = {
   indicator: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH';
   description: string;
 }
 
-export interface TransactionHistorySummary {
+export type TransactionHistorySummary = {
   total_trades: number;
   total_volume: number;
   avg_order_value: number;
@@ -257,7 +259,7 @@ export interface TransactionHistorySummary {
   months_active: number;
 }
 
-export interface FinancialIdentityRow {
+export type FinancialIdentityRow = {
   id: string;
   user_id: string;
   credit_readiness_score: number;
@@ -268,7 +270,7 @@ export interface FinancialIdentityRow {
   transaction_history_summary: TransactionHistorySummary;
 }
 
-export interface FinancialIdentityInsert {
+export type FinancialIdentityInsert = {
   id?: string;
   user_id: string;
   credit_readiness_score: number;
@@ -278,7 +280,7 @@ export interface FinancialIdentityInsert {
   transaction_history_summary: TransactionHistorySummary;
 }
 
-export interface FinancialIdentityUpdate {
+export type FinancialIdentityUpdate = {
   credit_readiness_score?: number;
   risk_indicators?: RiskIndicator[];
   reliability_rating?: number;
@@ -289,7 +291,7 @@ export interface FinancialIdentityUpdate {
 
 // ---- Blockchain Logs ----
 
-export interface BlockchainLogRow {
+export type BlockchainLogRow = {
   id: string;
   order_id: string;
   event_type: BlockchainEventType;
@@ -298,7 +300,7 @@ export interface BlockchainLogRow {
   timestamp: string;
 }
 
-export interface BlockchainLogInsert {
+export type BlockchainLogInsert = {
   id?: string;
   order_id: string;
   event_type: BlockchainEventType;
@@ -307,14 +309,14 @@ export interface BlockchainLogInsert {
   timestamp?: string;
 }
 
-export interface BlockchainLogUpdate {
+export type BlockchainLogUpdate = {
   tx_hash?: string;
   block_number?: number;
 }
 
 // ---- RPC Return Types ----
 
-export interface TraderStats {
+export type TraderStats = {
   total_trades: number;
   total_volume: number;
   avg_order_value: number;

@@ -70,7 +70,7 @@ function loadConfig(): EnvConfig {
       .map((issue) => `  ✗ ${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
     // eslint-disable-next-line no-console
-    console.error(`\n❌ Environment validation failed:\n${formatted}\n`);
+    console.error(`\n Environment validation failed:\n${formatted}\n`);
     process.exit(1);
   }
 

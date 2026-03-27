@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Payments Controller
- * ============================================
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { paymentsService } from './payments.service';
 import { ApiResponse } from '../../common/utils/response';
@@ -50,7 +44,7 @@ export class PaymentsController {
    */
   async verify(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await paymentsService.verifyPayment(req.params.transactionRef);
+      const result = await paymentsService.verifyPayment(req.params.transactionRef as string);
       ApiResponse.success(res, result);
     } catch (error) {
       next(error);

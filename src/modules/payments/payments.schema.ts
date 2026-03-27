@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Payments Validation Schemas
- * ============================================
- */
-
 import { z } from 'zod';
 
 export const initiatePaymentSchema = z.object({

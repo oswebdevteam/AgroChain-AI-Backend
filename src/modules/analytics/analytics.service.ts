@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Analytics Service
- * ============================================
- * Phase 4: Cross-Border Intelligence (foundational stubs).
- * Trade corridor aggregation, settlement metrics, and FX rate integration.
- */
-
 import { config } from '../../config/env';
 import { analyticsRepository } from './analytics.repository';
 import { AppError } from '../../common/errors/AppError';

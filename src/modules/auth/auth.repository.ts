@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Auth Repository
- * ============================================
- * Data access layer for user profiles in Supabase.
- * All queries use supabaseAdmin to bypass RLS for server-side operations.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import { ProfileRow, ProfileInsert, ProfileUpdate } from '../../common/types';
 import { AppError } from '../../common/errors/AppError';

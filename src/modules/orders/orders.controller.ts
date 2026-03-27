@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Orders Controller
- * ============================================
- * Thin controller: routing + delegation to OrdersService.
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { ordersService } from './orders.service';
 import { ApiResponse } from '../../common/utils/response';
@@ -34,7 +27,7 @@ export class OrdersController {
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const order = await ordersService.getOrderById(
-        req.params.id,
+        req.params.id as string,
         req.user!.id,
         req.user!.role
       );
@@ -79,7 +72,7 @@ export class OrdersController {
   async confirmDelivery(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const order = await ordersService.confirmDelivery(
-        req.params.id,
+        req.params.id as string,
         req.user!.id,
         req.body.deliveryProofUrl
       );
@@ -95,7 +88,7 @@ export class OrdersController {
    */
   async cancel(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const order = await ordersService.cancelOrder(req.params.id, req.user!.id);
+      const order = await ordersService.cancelOrder(req.params.id as string, req.user!.id);
       ApiResponse.success(res, order, 'Order cancelled');
     } catch (error) {
       next(error);

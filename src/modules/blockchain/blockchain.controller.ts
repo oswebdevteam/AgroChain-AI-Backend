@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Blockchain Controller
- * ============================================
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { blockchainService } from './blockchain.service';
 import { ApiResponse } from '../../common/utils/response';
@@ -15,7 +9,7 @@ export class BlockchainController {
    */
   async getProof(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const proof = await blockchainService.getBlockchainProof(req.params.id);
+      const proof = await blockchainService.getBlockchainProof(req.params.id as string);
       ApiResponse.success(res, proof);
     } catch (error) {
       next(error);

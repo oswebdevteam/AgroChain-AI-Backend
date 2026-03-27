@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Server Entry Point
- * ============================================
- * Starts the Express server with graceful shutdown handling.
- */
-
 import { app } from './app';
 import { config } from './config/env';
 import { logger } from './config/logger';
@@ -18,10 +11,10 @@ const server = app.listen(PORT, () => {
       environment: config.NODE_ENV,
       apiVersion: config.API_VERSION,
     },
-    `🌾 AgroChain AI server started on port ${PORT}`
+    ` AgroChain AI server started on port ${PORT}`
   );
-  logger.info(`📖 API Docs: http://localhost:${PORT}/api/docs`);
-  logger.info(`❤️  Health: http://localhost:${PORT}/health`);
+  logger.info(` API Docs: http://localhost:${PORT}/api/docs`);
+  logger.info(`  Health: http://localhost:${PORT}/health`);
 });
 
 // ============================================

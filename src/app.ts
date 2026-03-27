@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Express Application Setup
- * ============================================
- * Configures Express with all middleware, routes, and error handling.
- * Middleware chain order matters — security first, then logging, then parsing, then routes.
- */
-
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';

@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Enumerations
- * ============================================
- * Central enum definitions used across all modules.
- * These mirror the CHECK constraints in the database schema.
- */
-
 /** User roles for role-based access control */
 export enum UserRole {
   BUYER = 'BUYER',

@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Auth Service
- * ============================================
- * Business logic for authentication: registration, login, OTP, token refresh.
- * Uses Supabase Auth for identity management + profiles table for extended data.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import { authRepository } from './auth.repository';
 import { AppError } from '../../common/errors/AppError';

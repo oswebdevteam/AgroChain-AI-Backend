@@ -1,12 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Centralized Error Handler
- * ============================================
- * Catches all errors, logs them, and returns standardized responses.
- * Distinguishes operational errors from unexpected bugs.
- * Never leaks stack traces in production.
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { AppError } from '../errors/AppError';

@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Auth Validation Schemas
- * ============================================
- * Zod schemas for auth endpoint request validation.
- */
-
 import { z } from 'zod';
 import { UserRole } from '../../common/types';
 

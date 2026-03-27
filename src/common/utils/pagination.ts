@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Pagination Utilities
- * ============================================
- * Parses pagination/sorting parameters from query strings
- * and converts them to Supabase-compatible range queries.
- */
-
 import { PaginationMeta } from '../types';
 
 export interface PaginationParams {

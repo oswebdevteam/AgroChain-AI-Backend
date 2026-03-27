@@ -1,23 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Blockchain Service
- * ============================================
- * Records trade events on Base Sepolia testnet using ethers.js v6.
- *
- * Architecture:
- * - Sends encoded trade data as transaction calldata
- * - Waits for 1 confirmation
- * - Stores txHash + blockNumber in database
- * - Provides BaseScan verification links
- *
- * All on-chain data is hashed for privacy:
- * - Party addresses are SHA-256 hashed
- * - Only the trade agreement reference (orderId) links on-chain to off-chain
- *
- * IMPORTANT: This uses Base Sepolia (testnet) exclusively.
- * Production would require proper key management (AWS KMS, HashiCorp Vault).
- */
-
 import { ethers } from 'ethers';
 import { config } from '../../config/env';
 import { blockchainRepository } from './blockchain.repository';

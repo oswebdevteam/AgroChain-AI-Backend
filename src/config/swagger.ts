@@ -16,7 +16,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
         'Every agricultural trade becomes verified, trackable, transparent, and credit-worthy financial data.',
       contact: {
         name: 'AgroChain AI Support',
-        email: 'support@agrochain.ai',
+        email: 'oswebdevteam@gmail.com',
       },
       license: {
         name: 'MIT',

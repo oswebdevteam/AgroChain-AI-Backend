@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Orders Validation Schemas
- * ============================================
- */
-
 import { z } from 'zod';
 import { Currency } from '../../common/types';
 

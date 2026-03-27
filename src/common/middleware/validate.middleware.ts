@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Zod Validation Middleware
- * ============================================
- * Generic middleware factory that validates request body, params, and query
- * against Zod schemas before the request reaches the controller.
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 
@@ -16,7 +8,7 @@ interface ValidationSchemas {
 }
 
 /**
- * Middleware factory: Validates incoming request data against Zod schemas.
+ * Middleware factory: Validates incoming request data against Zod schemas before it hits the controller.
  * On validation failure, passes a ZodError to the error handler.
  *
  * @param schemas - Object with optional body, params, query Zod schemas

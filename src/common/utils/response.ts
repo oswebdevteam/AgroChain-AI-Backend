@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Standardized API Response Helper
- * ============================================
- * Ensures all API responses follow the consistent envelope format:
- * { success: boolean, data?: T, message?: string, error?: string }
- */
-
 import { Response } from 'express';
 import { PaginationMeta } from '../types';
 

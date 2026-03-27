@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Auth Controller
- * ============================================
- * Thin controller: routing + request validation only.
- * All business logic is delegated to AuthService.
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
 import { ApiResponse } from '../../common/utils/response';

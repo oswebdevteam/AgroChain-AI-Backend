@@ -1,9 +1,4 @@
-/**
- * ============================================
- * AgroChain AI — Jest Global Setup
- * ============================================
- * Sets up mock environment variables before any test runs.
- */
+//Sets up mock environment variables before any test runs.
 
 process.env.NODE_ENV = 'test';
 process.env.PORT = '3001';

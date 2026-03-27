@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Orders Service
- * ============================================
- * Business logic for the produce order lifecycle.
- * Handles creation, listing, delivery confirmation, and cancellation.
- */
-
 import { ordersRepository } from './orders.repository';
 import { authRepository } from '../auth/auth.repository';
 import { AppError } from '../../common/errors/AppError';

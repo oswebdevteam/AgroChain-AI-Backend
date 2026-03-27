@@ -1,21 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Payments Service
- * ============================================
- * Interswitch payment gateway integration.
- *
- * Payment Flow:
- * 1. Buyer initiates payment → generate transactionRef → call Interswitch /purchases
- * 2. Interswitch processes payment → sends webhook to our endpoint
- * 3. Webhook handler verifies signature → confirms payment → triggers escrow
- *
- * Security:
- * - OAuth2 client credentials for API access
- * - HMAC-SHA512 webhook signature verification
- * - Idempotent payment processing (transactionRef-based)
- * - Verification re-query after webhook for reconciliation
- */
-
 import { config } from '../../config/env';
 import { ordersRepository } from '../orders/orders.repository';
 import { paymentsRepository } from './payments.repository';

@@ -1,20 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — AI Financial Identity Service
- * ============================================
- * Phase 3: AI-powered credit scoring engine.
- *
- * After every completed transaction, aggregates a trader's history
- * and uses OpenAI (or configured LLM) to generate:
- * - Credit Readiness Score (0-100)
- * - Risk indicators with severity
- * - Trade reliability rating
- * - Financing eligibility signal
- *
- * Farmers build real financial identity from actual trade behavior —
- * no traditional credit bureau needed.
- */
-
 import OpenAI from 'openai';
 import { config } from '../../config/env';
 import { aiRepository } from './ai.repository';
@@ -75,12 +58,12 @@ export class AiService {
     // Step 2: Calculate platform tenure
     const platformTenureMonths = traderStats.firstTradeDate
       ? Math.max(
-          1,
-          Math.ceil(
-            (Date.now() - new Date(traderStats.firstTradeDate).getTime()) /
-              (30 * 24 * 60 * 60 * 1000)
-          )
+        1,
+        Math.ceil(
+          (Date.now() - new Date(traderStats.firstTradeDate).getTime()) /
+          (30 * 24 * 60 * 60 * 1000)
         )
+      )
       : 0;
 
     // Step 3: Build prompt and call OpenAI
@@ -186,10 +169,10 @@ export class AiService {
 
       const riskIndicators = Array.isArray(parsed.riskIndicators)
         ? (parsed.riskIndicators as RiskIndicator[]).map((ri) => ({
-            indicator: String(ri.indicator),
-            severity: ri.severity as 'LOW' | 'MEDIUM' | 'HIGH',
-            description: String(ri.description),
-          }))
+          indicator: String(ri.indicator),
+          severity: ri.severity as 'LOW' | 'MEDIUM' | 'HIGH',
+          description: String(ri.description),
+        }))
         : [];
 
       return {

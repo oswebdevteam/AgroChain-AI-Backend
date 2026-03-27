@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Escrow Validation Schemas
- * ============================================
- */
-
 import { z } from 'zod';
 
 export const escrowOrderIdParamSchema = z.object({

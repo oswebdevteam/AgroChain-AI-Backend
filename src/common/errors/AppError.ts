@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Custom Application Error
- * ============================================
- * Centralized error class with HTTP status codes.
- * Distinguishes operational errors (expected) from programming errors (bugs).
- */
-
 export class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;

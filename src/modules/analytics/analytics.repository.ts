@@ -1,14 +1,7 @@
-/**
- * ============================================
- * AgroChain AI — Analytics Repository
- * ============================================
- * Supabase data access for trade corridor aggregation and analytics.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import { AppError } from '../../common/errors/AppError';
 import { createModuleLogger } from '../../config/logger';
-import { OrderStatus } from '../../common/types';
+import { OrderStatus, Currency } from '../../common/types';
 
 const logger = createModuleLogger('analytics-repository');
 
@@ -33,9 +26,6 @@ export class AnalyticsRepository {
    * Aggregate trade volume by produce type (trade corridors).
    */
   async getTradeCorridor(): Promise<TradeCorridorData[]> {
-    // Supabase doesn't support GROUP BY natively via the JS client, 
-    // so we fetch completed orders and aggregate in-memory.
-    // In production, use a Postgres function for this.
     const { data: orders, error } = await supabaseAdmin
       .from('produce_orders')
       .select('produce_type, total_amount, currency, created_at, updated_at, status')
@@ -142,7 +132,7 @@ export class AnalyticsRepository {
     const { data, error } = await supabaseAdmin
       .from('produce_orders')
       .select('id, currency, total_amount, status')
-      .neq('currency', 'NGN');
+      .neq('currency', Currency.NGN);
 
     if (error) {
       logger.error({ error }, 'Failed to fetch cross-border orders');

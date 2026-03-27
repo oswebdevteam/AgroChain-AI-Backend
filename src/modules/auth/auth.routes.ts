@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Auth Routes
- * ============================================
- * Route definitions for authentication endpoints.
- */
-
 import { Router } from 'express';
 import { authController } from './auth.controller';
 import { validate } from '../../common/middleware/validate.middleware';

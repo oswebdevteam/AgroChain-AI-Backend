@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Payments Routes
- * ============================================
- */
-
 import { Router } from 'express';
 import { paymentsController } from './payments.controller';
 import { validate } from '../../common/middleware/validate.middleware';

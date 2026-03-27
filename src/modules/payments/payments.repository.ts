@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Payments Repository
- * ============================================
- * Supabase data access layer for transaction records.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import {
   TransactionRecordRow,

@@ -1,9 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Orders Routes
- * ============================================
- */
-
 import { Router } from 'express';
 import { ordersController } from './orders.controller';
 import { validate } from '../../common/middleware/validate.middleware';

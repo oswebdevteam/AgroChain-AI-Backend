@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Escrow Repository
- * ============================================
- * Supabase data access layer for escrow records.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import { EscrowRow, EscrowInsert, EscrowUpdate, EscrowStatus } from '../../common/types';
 import { AppError } from '../../common/errors/AppError';

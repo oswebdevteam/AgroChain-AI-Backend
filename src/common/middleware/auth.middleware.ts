@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Authentication Middleware
- * ============================================
- * JWT verification using Supabase Auth.
- * Attaches typed user object to request for downstream handlers.
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../../config/supabase';
 import { AppError } from '../errors/AppError';

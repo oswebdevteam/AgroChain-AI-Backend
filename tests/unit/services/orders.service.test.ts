@@ -8,7 +8,7 @@ import { OrdersService } from '../../../src/modules/orders/orders.service';
 import { ordersRepository } from '../../../src/modules/orders/orders.repository';
 import { authRepository } from '../../../src/modules/auth/auth.repository';
 import { createTestProfile, createTestOrder } from '../../helpers/testData';
-import { OrderStatus, UserRole } from '../../../src/common/types';
+import { OrderStatus, UserRole, Currency } from '../../../src/common/types';
 import { AppError } from '../../../src/common/errors/AppError';
 
 // Mock dependencies
@@ -48,6 +48,7 @@ describe('OrdersService', () => {
         produceType: 'Maize',
         quantity: 100,
         unit: 'kg',
+        currency: Currency.NGN,
         unitPrice: 500,
         deliveryAddress: '123 Farm Road',
       });
@@ -68,6 +69,7 @@ describe('OrdersService', () => {
           produceType: 'Maize',
           quantity: 100,
           unit: 'kg',
+          currency: Currency.NGN,
           unitPrice: 500,
           deliveryAddress: '123 Farm Road',
         })
@@ -84,6 +86,7 @@ describe('OrdersService', () => {
           produceType: 'Maize',
           quantity: 100,
           unit: 'kg',
+          currency: Currency.NGN,
           unitPrice: 500,
           deliveryAddress: '123 Farm Road',
         })
@@ -100,6 +103,7 @@ describe('OrdersService', () => {
           produceType: 'Maize',
           quantity: 100,
           unit: 'kg',
+          currency: Currency.NGN,
           unitPrice: 500,
           deliveryAddress: '123 Farm Road',
         })
@@ -119,6 +123,7 @@ describe('OrdersService', () => {
         produceType: 'Rice',
         quantity: 3,
         unit: 'kg',
+        currency: Currency.NGN,
         unitPrice: 33.33,
         deliveryAddress: 'Address',
       });

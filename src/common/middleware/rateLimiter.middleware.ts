@@ -1,11 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Rate Limiting Middleware
- * ============================================
- * Configurable rate limiting per IP and per user.
- * Stricter limits on authentication endpoints.
- */
-
 import rateLimit from 'express-rate-limit';
 import { config } from '../../config/env';
 

@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — AI Repository
- * ============================================
- * Supabase data access for financial identities and trade statistics.
- */
-
 import { supabaseAdmin } from '../../config/supabase';
 import {
   FinancialIdentityRow,

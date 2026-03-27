@@ -1,17 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Escrow Service
- * ============================================
- * Manages the full escrow lifecycle:
- *   HELD → RELEASED (on delivery confirmation)
- *   HELD → REFUNDED (on cancellation/dispute)
- *
- * Critical financial invariants:
- * - Escrow creation and order status update must be atomic
- * - Release triggers payout to seller + blockchain recording + AI analysis
- * - All state transitions are idempotent and auditable via transaction_records
- */
-
 import { escrowRepository } from './escrow.repository';
 import { ordersRepository } from '../orders/orders.repository';
 import { paymentsRepository } from '../payments/payments.repository';

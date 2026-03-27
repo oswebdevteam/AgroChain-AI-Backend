@@ -1,10 +1,3 @@
-/**
- * ============================================
- * AgroChain AI — Request Logger Middleware
- * ============================================
- * Pino HTTP request/response logging with redaction.
- */
-
 import pinoHttp from 'pino-http';
 import { logger } from '../../config/logger';
 
