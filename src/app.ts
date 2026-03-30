@@ -20,6 +20,13 @@ import { analyticsRoutes } from './modules/analytics/analytics.routes';
 
 const app = express();
 
+const corsOptions = {
+  origin: config.CORS_ORIGINS.split(',').map((o) => o.trim()),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 // ============================================
 // Security Middleware
 // ============================================
@@ -30,24 +37,20 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"], // Required for Swagger UI
+        scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:'],
       },
     },
-    crossOriginEmbedderPolicy: false, // Allow Swagger UI
+    crossOriginEmbedderPolicy: false,
   })
 );
 
+/** Handle OPTIONS preflight requests */
+app.options('*', cors(corsOptions));
+
 /** CORS — restricted to configured frontend origins */
-app.use(
-  cors({
-    origin: config.CORS_ORIGINS.split(',').map((o) => o.trim()),
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+app.use(cors(corsOptions));
 
 // ============================================
 // Parsing & Logging Middleware
@@ -106,7 +109,7 @@ app.use(`${apiPrefix}/payments`, paymentsRoutes);
 app.use(`${apiPrefix}/webhooks`, webhookRoutes);
 app.use(`${apiPrefix}/escrow`, escrowRoutes);
 app.use(`${apiPrefix}/blockchain`, blockchainRoutes);
-app.use(`${apiPrefix}`, aiRoutes); // /api/v1/users/:id/financial-identity
+app.use(`${apiPrefix}`, aiRoutes);
 app.use(`${apiPrefix}/analytics`, analyticsRoutes);
 
 // ============================================
