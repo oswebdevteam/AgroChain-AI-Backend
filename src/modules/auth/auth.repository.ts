@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '../../config/supabase';
-import { ProfileRow, ProfileInsert, ProfileUpdate } from '../../common/types';
+import { ProfileRow, ProfileInsert, ProfileUpdate, UserRole } from '../../common/types';
 import { AppError } from '../../common/errors/AppError';
 import { createModuleLogger } from '../../config/logger';
 
@@ -113,6 +113,42 @@ export class AuthRepository {
     }
 
     return (count ?? 0) > 0;
+  }
+
+  /**
+   * Search for profiles with role SELLER.
+   * Searches by full_name, email, or exact ID.
+   *
+   * @param query - Search string
+   * @returns Array of matching seller profiles
+   */
+  async searchSellers(query: string): Promise<ProfileRow[]> {
+    let builder = supabaseAdmin
+      .from('profiles')
+      .select('*')
+      .eq('role', UserRole.SELLER);
+
+    if (query) {
+      // Validate if query is a valid UUID for the id search
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const isUuid = uuidRegex.test(query);
+
+      // Use or condition for multi-field search
+      if (isUuid) {
+        builder = builder.or(`full_name.ilike.%${query}%,email.ilike.%${query}%,id.eq.${query}`);
+      } else {
+        builder = builder.or(`full_name.ilike.%${query}%,email.ilike.%${query}%`);
+      }
+    }
+
+    const { data: profiles, error } = await builder.limit(10);
+
+    if (error) {
+      logger.error({ error, query }, 'Failed to search sellers');
+      throw AppError.internal(`Failed to search sellers: ${error.message}`);
+    }
+
+    return profiles || [];
   }
 }
 

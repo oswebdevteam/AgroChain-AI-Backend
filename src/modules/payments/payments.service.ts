@@ -129,54 +129,63 @@ export class PaymentsService {
     // Step 3: Generate unique transaction reference
     const transactionRef = generateTransactionRef();
 
-    // Step 4: Call Interswitch Purchase API
-    const token = await this.getInterswitchToken();
-    const amountInKobo = Math.round(order.total_amount * 100); // Interswitch uses minor currency units
-
-    const purchasePayload = {
-      merchant_code: config.INTERSWITCH_MERCHANT_CODE,
-      pay_item_id: config.INTERSWITCH_PAYMENT_ITEM_ID,
-      txn_ref: transactionRef,
-      amount: amountInKobo,
-      currency: order.currency === Currency.USD ? '840' : '566', // ISO 4217 numeric
-      cust_id: userId,
-      cust_name: userId, // Would be full name in production
-      pay_item_name: `AgroChain Order: ${order.produce_type}`,
-      site_redirect_url: `${config.CORS_ORIGINS.split(',')[0]}/payment/callback`,
-    };
-
+    // Step 4: Call Interswitch Purchase API (or use mock in development)
     let interswitchResponse: { paymentReference: string; redirectUrl: string };
 
-    try {
-      const response = await fetch(
-        `${config.INTERSWITCH_BASE_URL}/api/v3/purchases`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(purchasePayload),
-        }
-      );
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        logger.error(
-          { status: response.status, body: errorBody },
-          'Interswitch purchase request failed'
-        );
-        throw AppError.badGateway('Payment gateway request failed');
-      }
-
-      interswitchResponse = (await response.json()) as {
-        paymentReference: string;
-        redirectUrl: string;
+    if (config.NODE_ENV === 'development' || !config.INTERSWITCH_CLIENT_SECRET || config.INTERSWITCH_CLIENT_SECRET === 'secret') {
+      // --- MOCK PAYMENT (sandbox/dev mode) ---
+      const mockRef = `MOCK-${transactionRef}`;
+      const verifyUrl = `${config.CORS_ORIGINS.split(',')[0]}/payments/verify/${mockRef}`;
+      logger.warn({ orderId, transactionRef }, 'Using MOCK payment (dev mode) — no real gateway call');
+      interswitchResponse = {
+        paymentReference: mockRef,
+        redirectUrl: verifyUrl,
       };
-    } catch (error) {
-      if (error instanceof AppError) throw error;
-      logger.error({ error }, 'Interswitch API call failed');
-      throw AppError.badGateway('Unable to reach payment gateway');
+    } else {
+      // --- REAL INTERSWITCH CALL ---
+      const token = await this.getInterswitchToken();
+      const amountInKobo = Math.round(order.total_amount * 100);
+
+      const purchasePayload = {
+        merchant_code: config.INTERSWITCH_MERCHANT_CODE,
+        pay_item_id: config.INTERSWITCH_PAYMENT_ITEM_ID,
+        txn_ref: transactionRef,
+        amount: amountInKobo,
+        currency: order.currency === Currency.USD ? '840' : '566',
+        cust_id: userId,
+        cust_name: userId,
+        pay_item_name: `AgroChain Order: ${order.produce_type}`,
+        site_redirect_url: `${config.CORS_ORIGINS.split(',')[0]}/payment/callback`,
+      };
+
+      try {
+        const response = await fetch(
+          `${config.INTERSWITCH_BASE_URL}/api/v3/purchases`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(purchasePayload),
+          }
+        );
+
+        if (!response.ok) {
+          const errorBody = await response.text();
+          logger.error({ status: response.status, body: errorBody }, 'Interswitch purchase request failed');
+          throw AppError.badGateway('Payment gateway request failed');
+        }
+
+        interswitchResponse = (await response.json()) as {
+          paymentReference: string;
+          redirectUrl: string;
+        };
+      } catch (error) {
+        if (error instanceof AppError) throw error;
+        logger.error({ error }, 'Interswitch API call failed');
+        throw AppError.badGateway('Unable to reach payment gateway');
+      }
     }
 
     // Step 5: Store pending transaction record
@@ -338,7 +347,65 @@ export class PaymentsService {
     amount: number;
     responseCode: string;
     responseDescription: string;
+    orderId?: string;
   }> {
+    // --- MOCK PAYMENT VERIFICATION (dev mode) ---
+    if (transactionRef.startsWith('MOCK-')) {
+      logger.warn({ transactionRef }, 'Mock payment verification — auto-succeeding');
+
+      // Find the transaction by interswitch_ref
+      const transaction = await paymentsRepository.findByInterswitchRef(transactionRef);
+      if (!transaction) {
+        throw AppError.notFound('Mock transaction not found');
+      }
+
+      // Skip if already completed
+      const meta = transaction.metadata as Record<string, unknown>;
+      if (meta?.status === 'COMPLETED') {
+        return {
+          status: 'COMPLETED',
+          amount: transaction.amount,
+          responseCode: '00',
+          responseDescription: 'Mock payment already completed',
+          orderId: transaction.order_id,
+        };
+      }
+
+      // Mark transaction as COMPLETED
+      await paymentsRepository.update(transaction.id, {
+        metadata: {
+          ...meta,
+          status: 'COMPLETED',
+          completedAt: new Date().toISOString(),
+          responseCode: '00',
+          responseDescription: 'Mock payment successful',
+        },
+      });
+
+      // Update order status to PAID
+      await ordersRepository.updateStatus(
+        transaction.order_id,
+        OrderStatus.PAID,
+        OrderStatus.PENDING
+      );
+
+      // Create escrow
+      await escrowService.createEscrow(
+        transaction.order_id,
+        transaction.amount,
+        transactionRef
+      );
+
+      return {
+        status: 'SUCCESS',
+        amount: transaction.amount,
+        responseCode: '00',
+        responseDescription: 'Mock payment successful',
+        orderId: transaction.order_id,
+      };
+    }
+
+    // --- REAL INTERSWITCH VERIFICATION ---
     const token = await this.getInterswitchToken();
 
     const response = await fetch(

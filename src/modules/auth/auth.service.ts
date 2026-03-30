@@ -245,6 +245,16 @@ export class AuthService {
       wallet_address: data.walletAddress,
     });
   }
+
+  /**
+   * Search for seller profiles by name, email, or ID.
+   *
+   * @param query - Search term
+   * @returns List of matching sellers
+   */
+  async searchSellers(query: string): Promise<ProfileRow[]> {
+    return authRepository.searchSellers(query);
+  }
 }
 
 /** Singleton instance */

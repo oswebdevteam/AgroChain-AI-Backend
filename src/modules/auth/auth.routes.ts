@@ -144,4 +144,13 @@ router.patch(
   authController.updateProfile.bind(authController)
 );
 
+/**
+ * @swagger
+ * /auth/sellers:
+ *   get:
+ *     summary: Search for seller profiles
+ *     tags: [Auth]
+ */
+router.get('/sellers', authenticate, authController.searchSellers.bind(authController));
+
 export { router as authRoutes };

@@ -161,6 +161,20 @@ export class AuthController {
       next(error);
     }
   }
+
+  /**
+   * GET /api/v1/auth/sellers
+   * Search for seller profiles by name, email, or ID.
+   */
+  async searchSellers(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const query = req.query.q as string || '';
+      const sellers = await authService.searchSellers(query);
+      ApiResponse.success(res, sellers);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 /** Singleton instance */
