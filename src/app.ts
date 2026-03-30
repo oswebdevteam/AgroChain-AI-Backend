@@ -1,6 +1,5 @@
 import express from 'express';
 import helmet from 'helmet';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import { config } from './config/env';
@@ -19,13 +18,6 @@ import { aiRoutes } from './modules/ai/ai.routes';
 import { analyticsRoutes } from './modules/analytics/analytics.routes';
 
 const app = express();
-
-const corsOptions = {
-  origin: config.CORS_ORIGINS.split(',').map((o) => o.trim()),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
 
 // ============================================
 // Security Middleware
@@ -46,11 +38,26 @@ app.use(
   })
 );
 
-/** Handle OPTIONS preflight requests */
-app.options('*', cors(corsOptions));
+/** CORS — manual headers */
+app.use((req, res, next) => {
+  const allowedOrigins = config.CORS_ORIGINS.split(',').map((o) => o.trim());
+  const origin = req.headers.origin || '';
 
-/** CORS — restricted to configured frontend origins */
-app.use(cors(corsOptions));
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+
+  next();
+});
 
 // ============================================
 // Parsing & Logging Middleware
