@@ -15,6 +15,7 @@ const envSchema = z.object({
 
   // CORS
   CORS_ORIGINS: z.string().default('http://localhost:3000,http://localhost:5173'),
+  FRONTEND_URL: z.string().url().default('http://localhost:3000'),
 
   // Supabase
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
