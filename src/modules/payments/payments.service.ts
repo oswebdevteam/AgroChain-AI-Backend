@@ -135,7 +135,9 @@ export class PaymentsService {
     if (config.NODE_ENV === 'development' || !config.INTERSWITCH_CLIENT_SECRET || config.INTERSWITCH_CLIENT_SECRET === 'secret') {
       // --- MOCK PAYMENT (sandbox/dev mode) ---
       const mockRef = `MOCK-${transactionRef}`;
-      const verifyUrl = `${config.CORS_ORIGINS.split(',')[0]}/payments/verify/${mockRef}`;
+      // Use the first CORS origin as the frontend base URL
+      const frontendUrl = config.CORS_ORIGINS.split(',')[0].trim();
+      const verifyUrl = `${frontendUrl}/payment/callback?ref=${mockRef}`;
       logger.warn({ orderId, transactionRef }, 'Using MOCK payment (dev mode) — no real gateway call');
       interswitchResponse = {
         paymentReference: mockRef,
