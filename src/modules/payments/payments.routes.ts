@@ -39,6 +39,8 @@ router.post(
  *   get:
  *     summary: Verify payment status
  *     tags: [Payments]
+ *     security: []
+ *     description: Verify payment status after callback. No auth required - transaction reference acts as secure identifier.
  *     parameters:
  *       - in: path
  *         name: transactionRef
@@ -49,7 +51,6 @@ router.post(
  */
 router.get(
   '/verify/:transactionRef',
-  authenticate,
   paymentsController.verify.bind(paymentsController)
 );
 
