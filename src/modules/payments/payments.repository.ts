@@ -79,6 +79,11 @@ export class PaymentsRepository {
       .single();
 
     if (error) {
+      // Check if the error is due to no rows being returned (transaction not found)
+      if (error.code === 'PGRST116') {
+        logger.warn({ id }, 'Transaction not found for update');
+        throw AppError.notFound('Transaction not found');
+      }
       logger.error({ error, id }, 'Failed to update transaction record');
       throw AppError.internal(`Failed to update transaction: ${error.message}`);
     }
