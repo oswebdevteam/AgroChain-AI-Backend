@@ -115,7 +115,8 @@ export class OrdersService {
 
   /**
    * Confirm delivery of an order.
-   * Only the seller can confirm delivery. Transitions from IN_ESCROW → DELIVERED.
+   * Only the seller can confirm delivery. Transitions from IN_ESCROW → DELIVERED → COMPLETED.
+   * Automatically releases escrow funds to the seller.
    *
    * @param orderId - Order UUID
    * @param sellerId - Authenticated seller's user ID
@@ -152,7 +153,16 @@ export class OrdersService {
       delivery_proof_url: deliveryProofUrl ?? null,
     });
 
-    logger.info({ orderId }, 'Delivery confirmed');
+    // Automatically release escrow after delivery confirmation
+    try {
+      const { escrowService } = await import('../escrow/escrow.service');
+      await escrowService.releaseEscrow(orderId);
+      logger.info({ orderId }, 'Delivery confirmed and escrow released');
+    } catch (error) {
+      logger.error({ error, orderId }, 'Failed to release escrow after delivery confirmation');
+      // Don't throw - delivery is confirmed, escrow can be released manually by admin
+    }
+
     return updatedOrder;
   }
 

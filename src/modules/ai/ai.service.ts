@@ -135,11 +135,13 @@ export class AiService {
 
   /**
    * Get a user's financial identity (without re-analyzing).
+   * If no identity exists, creates a default one for new users.
    */
   async getFinancialIdentity(userId: string): Promise<FinancialIdentityRow> {
     const identity = await aiRepository.findByUserId(userId);
     if (!identity) {
-      throw AppError.notFound('Financial identity not found. Complete trades to build your profile.');
+      logger.info({ userId }, 'No financial identity found — creating default identity');
+      return this.createDefaultIdentity(userId);
     }
     return identity;
   }
